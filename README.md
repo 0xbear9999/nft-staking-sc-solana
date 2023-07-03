@@ -1,4 +1,4 @@
-# Non Custodial Staking Contract
+# Nft-Staking-Contract
 
 ## Install Dependencies
 
