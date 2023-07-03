@@ -82,3 +82,11 @@ First of all, open the directory and `yarn`
 ```
 
 Get status of user <USER_ADDRESS>.
+
+#### Get all users
+
+```js
+   yarn script get-users
+```
+
+Get all users stake info

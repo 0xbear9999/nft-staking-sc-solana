@@ -2,7 +2,7 @@ import {program} from 'commander';
 import {
     PublicKey
 } from '@solana/web3.js';
-import { getGlobalInfo, getUserInfo, initProject, initializeUserPool, setClusterConfig, stakeNft, unstakeNft } from './scripts';
+import { getAllUsers, getGlobalInfo, getUserInfo, initProject, initializeUserPool, setClusterConfig, stakeNft, unstakeNft } from './scripts';
 
 program.version('0.0.1');
 
@@ -17,6 +17,19 @@ programCommand('status')
     await setClusterConfig(env, keypair, rpc);
     
     console.log(await getGlobalInfo());
+});
+
+programCommand('get-users')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+.action(async (directory, cmd) => {
+    const { env, keypair, rpc } = cmd.opts();
+
+    console.log('Solana Cluster:', env);
+    console.log('Keypair Path:', keypair);
+    console.log('RPC URL:', rpc);
+    await setClusterConfig(env, keypair, rpc);
+    
+    console.log(await getAllUsers());
 });
 
 programCommand('user-status')

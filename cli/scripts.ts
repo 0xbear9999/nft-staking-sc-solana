@@ -2,7 +2,7 @@ import {Program, web3} from '@project-serum/anchor';
 import * as anchor from '@project-serum/anchor';
 import fs from 'fs';
 import NodeWallet from '@project-serum/anchor/dist/cjs/nodewallet';
-import { GLOBAL_AUTHORITY_SEED, PROGRAM_ID, MILSECS_IN_DAY, USER_POOL_SEED } from '../lib/constant';
+import { GLOBAL_AUTHORITY_SEED, PROGRAM_ID, MILSECS_IN_DAY, USER_POOL_SEED, USER_POOL_SIZE } from '../lib/constant';
 import { Connection, Keypair, PublicKey } from '@solana/web3.js';
 
 import {IDL} from "../target/types/nft_staking";
@@ -159,6 +159,66 @@ export const getGlobalInfo = async () => {
     };
 }
 
+export const getAllUsers = async () => {
+
+    let userPools = await solConnection.getProgramAccounts(
+        PROGRAM_ID,
+        {
+            filters: [{
+                dataSize: USER_POOL_SIZE,
+            }],
+        }
+    );
+
+    let result: UserPool[] = [];
+
+    try {
+        for (let idx = 0; idx < userPools.length; idx++) {
+            const data = userPools[idx].account.data;
+            const user = new PublicKey(data.slice(8, 40));
+            const stakeCnt = data[40];
+
+            let stakeData = [];
+            for (let i = 0; i < stakeCnt; i++) {
+                const mint = new PublicKey(data.slice(i * 40 + 45, i * 40 + 77));
+
+                const buf = data.slice(i * 40 + 77, i * 40 + 85).reverse();
+                const time = new anchor.BN(buf);
+
+                stakeData.push({
+                    mint,
+                    time,
+                });
+            }
+
+            result.push({
+                user,
+                stakeCnt,
+                stakeData,
+            });
+        }
+    } catch (e) {
+        console.log(e);
+        return {};
+    }
+  
+    return {
+        count: result.length,
+        data: result.map((usrPool: UserPool) => {
+            return {
+                user: usrPool.user.toBase58(),
+                stakeCnt: usrPool.stakeCnt,
+                stakeData: usrPool.stakeData.map((data) => {
+                    return {
+                        mint: data.mint.toBase58(),
+                        time: new Date(data.time.toNumber() * 1000).toLocaleString()
+                    };
+                }),
+            };
+        }),
+    };
+}
+
 export const getUserPoolState = async (
     userAddress: PublicKey
 ): Promise<UserPool | null> => {
@@ -191,8 +251,6 @@ export const getUserInfo = async (
         stakeCnt: userPool.stakeCnt,
         stakeData: userPool.stakeData.map((data) => {
             const timeDifference = (Date.now() - (data.time.toNumber() * 1000)) / MILSECS_IN_DAY;
-            console.log(Date.now());
-            console.log(timeDifference);
             let type = 'none';
             
             if (timeDifference >= 77) {
