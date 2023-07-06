@@ -9,7 +9,9 @@ import {IDL} from "../target/types/nft_staking";
 import { 
     createInitUserTx, 
     createInitializeTx, 
+    createLockPnftTx, 
     createStakeNftTx, 
+    createUnlockPnftTx, 
     createUnstakeNftTx, 
 } from '../lib/scripts';
 import { GlobalPool, UserPool } from '../lib/types';
@@ -121,6 +123,38 @@ export const unstakeNft = async (
 ) => {
     try {
         const tx = await createUnstakeNftTx(payer.publicKey, nftMint, program);
+
+        const txId = await provider.sendAndConfirm(tx, [], {
+            commitment: "confirmed",
+        });
+
+        console.log("txHash: ", txId);
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+export const lockPnft = async (
+    nftMint: PublicKey
+) => {
+    try {
+        const tx = await createLockPnftTx(payer.publicKey, nftMint, program, solConnection);
+
+        const txId = await provider.sendAndConfirm(tx, [], {
+            commitment: "confirmed",
+        });
+
+        console.log("txHash: ", txId);
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+export const unlockPnft = async (
+    nftMint: PublicKey
+) => {
+    try {
+        const tx = await createUnlockPnftTx(payer.publicKey, nftMint, program);
 
         const txId = await provider.sendAndConfirm(tx, [], {
             commitment: "confirmed",

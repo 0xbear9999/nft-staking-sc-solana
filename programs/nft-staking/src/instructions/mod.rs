@@ -6,3 +6,7 @@ pub mod stake_nft;
 pub use stake_nft::*;
 pub mod unstake_nft;
 pub use unstake_nft::*;
+pub mod lock_pnft;
+pub use lock_pnft::*;
+pub mod unlock_pnft;
+pub use unlock_pnft::*;

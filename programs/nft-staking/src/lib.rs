@@ -9,7 +9,7 @@ use error::*;
 use instructions::*;
 use state::*;
 
-declare_id!("Hdbk1NqJfN7F8CuUGy2Bq3xHiENumBhwiTug1tEGEQF2");
+declare_id!("Dy5euDjeY22ZaevosvsiNADVATGoDVsvPWvpgKf9HvnP");
 
 #[program]
 pub mod nft_staking {
@@ -40,5 +40,13 @@ pub mod nft_staking {
      */
     pub fn unstake_nft(mut ctx: Context<UnstakeNft>) -> Result<()> {
         UnstakeNft::process_instruction(&mut ctx)
+    }
+
+    pub fn lock_pnft(ctx: Context<LockPNFT>) -> Result<()> {
+        lock_pnft::lock_pnft_handler(ctx)
+    }
+
+    pub fn unlock_pnft(ctx: Context<UnlockPNFT>) -> Result<()> {
+        unlock_pnft::unlock_pnft_handler(ctx)
     }
 }

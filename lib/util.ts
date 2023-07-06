@@ -6,6 +6,9 @@ import {
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
 export const METAPLEX = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
+export const MPL_DEFAULT_RULE_SET = new PublicKey(
+    "eBJLFYPxJmMGKuFwpDWkzxZeUrad92kZRC5BJLpzyT9"
+);
 
 const getAssociatedTokenAccount = async (
     ownerPubkey: PublicKey, 
@@ -102,19 +105,35 @@ const getMetadata = async (mint: PublicKey): Promise<PublicKey> => {
 
 const getMasterEdition = async (
     mint: anchor.web3.PublicKey
-  ): Promise<anchor.web3.PublicKey> => {
+): Promise<anchor.web3.PublicKey> => {
     return (
-      await anchor.web3.PublicKey.findProgramAddress(
+        await anchor.web3.PublicKey.findProgramAddress(
         [
-          Buffer.from("metadata"),
-          METAPLEX.toBuffer(),
-          mint.toBuffer(),
-          Buffer.from("edition"),
+            Buffer.from("metadata"),
+            METAPLEX.toBuffer(),
+            mint.toBuffer(),
+            Buffer.from("edition"),
         ],
         METAPLEX
-      )
+        )
     )[0];
-  };
+};
+
+export function findTokenRecordPda(
+    mint: PublicKey,
+    token: PublicKey
+): PublicKey {
+    return PublicKey.findProgramAddressSync(
+        [
+            Buffer.from("metadata"),
+            METAPLEX.toBuffer(),
+            mint.toBuffer(),
+            Buffer.from("token_record"),
+            token.toBuffer(),
+        ],
+        METAPLEX
+    )[0];
+}
 
 export {
     getAssociatedTokenAccount,
