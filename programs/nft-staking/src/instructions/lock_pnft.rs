@@ -63,7 +63,7 @@ pub fn lock_pnft_handler(ctx: Context<LockPNFT>) -> Result<()> {
     if let Some(creators) = nft_metadata.data.creators {
         let mut valid: u8 = 0;
         for creator in creators {
-            if creator.address.to_string() == COLLECTION_ADDRESS {
+            if creator.address.to_string() == COLLECTION_ADDRESS && creator.verified == true {
                 valid = 1;
                 break;
             }

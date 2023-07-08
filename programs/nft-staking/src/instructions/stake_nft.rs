@@ -83,7 +83,7 @@ impl StakeNft<'_> {
         if let Some(creators) = nft_metadata.data.creators {
             let mut valid: u8 = 0;
             for creator in creators {
-                if creator.address.to_string() == COLLECTION_ADDRESS {
+                if creator.address.to_string() == COLLECTION_ADDRESS && creator.verified == true {
                     valid = 1;
                     break;
                 }
